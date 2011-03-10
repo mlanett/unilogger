@@ -1,0 +1,3 @@
+module Unilogger
+  # Your code goes here...
+end
