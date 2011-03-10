@@ -1,0 +1,1 @@
+Unified logger that writes to a log file, redis queue, mongo collection, and hoptoad.
