@@ -1,3 +1,7 @@
 module Unilogger
-  # Your code goes here...
+  # nop
 end
+
+require "unilogger/line_logger"
+
+STDERR.puts "[#{Process.pid}] unilogger: initialized"
