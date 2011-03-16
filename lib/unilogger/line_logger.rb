@@ -19,7 +19,7 @@ module Unilogger
     end
     
     def <<( message )
-      @sink << "#{Time.now.utc} [#{Process.pid}] #{message}"
+      @sink << "#{Time.now.to_i} [#{Process.pid}] #{message}"
     end
     
     # level methods may take 0, 1 or 2 arguments.
