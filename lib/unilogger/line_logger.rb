@@ -22,26 +22,31 @@ module Unilogger
       @sink << "#{Time.now.to_i} [#{Process.pid}] #{message}"
     end
     
-    # level methods may take 0, 1 or 2 arguments.
+    # level methods may take 0, 1 or 2 arguments, or 0 arguments and a block.
     # argument 1 should be a string.
     # argument 2 should be a hash.
+    # the block should yield a string
     Logger::Severity.constants.each do |const|
-      name  = const.to_s.downcase.to_sym
-      prio = Logger::Severity.const_get(const)
-      # e.g. info()
-      define_method( name ) do |*args|
-        raise ArgumentError if args.empty? or args.size > 2
+      # const e.g. INFO; label e.g. info; priority e.g. 1
+      label = const.to_s.downcase.to_sym
+      priority = Logger::Severity.const_get(const)
+      define_method( label ) do |*args,&block|
+        raise ArgumentError unless args.size <= 2 && ( ! block || args.empty? )
         message,options = *args
         raise ArgumentError if args.size == 2 and ( ! options.kind_of? Hash )
-        if @level <= prio then
-          message = "#{message}; #{options.inspect}" if options
-          self << "#{level} #{message}\n"
+        if @level <= priority && ( args.size > 0 || block ) then
+          if args.size == 2 then
+            message = "#{message}; #{options.inspect}"
+          elsif block then
+            message = block.call()
+          end
+          self << "#{const} #{message}\n"
         end
-        self
+        @level <= priority
       end
       # e.g. info?
-      define_method( "#{name}?".to_sym ) do
-        @level <= prio
+      define_method( "#{label}?".to_sym ) do
+        @level <= priority
       end
     end
     
