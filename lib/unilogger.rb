@@ -1,6 +1,7 @@
-$:.push File.expand_path("..", __FILE__)
+# $:.push File.expand_path("..", __FILE__)
 
 require "logger"
+
 require "unilogger/logger"
 require "unilogger/line_logger"
 require "unilogger/stderr_emitter"
