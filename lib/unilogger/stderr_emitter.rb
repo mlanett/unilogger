@@ -8,6 +8,12 @@ module Unilogger
   # Implements Logger API (debug, info, warn, error, fatal)
   class StderrEmitter
     
+    class << self
+      def build( options )
+        new
+      end
+    end
+    
     def initialize( io = STDERR )
       @io = io
     end

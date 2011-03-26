@@ -1,0 +1,17 @@
+# A logger must be defined for the runtime environment (RACK_ENV, RAILS_ENV, default development)
+# logger can have a level, numeric or symbolic, default 1
+# logger must have a set of emitters
+
+
+stderr:       &stderr
+  kind:       StdErr
+
+standard:     &standard
+  kind:       Logger
+  device:     "<%= ENV["RACK_ENV"] || "development" %>.log"
+  shift_age:  daily
+  shift_size: 1048576
+
+development:
+  level:      0
+  emitters:   [ *standard ]
