@@ -1,1 +1,48 @@
 Unified logger that writes to a log file, redis queue, mongo collection, and hoptoad.
+
+Unilogger is composed at runtime of a Logger instance which delegates log messages to a set of emitters.
+The emitters do the actual work of sending log messages to stderr, a file, redis, or elsewhere.
+
+Unilogger will initialize itself from a logger.yml or logger.yml.erb configuration file, if present.
+
+The configuration file should contain an entry named after the current environment, e.g.
+"development", "test", "production", etc.
+
+Logger options
+--------------
+level:      overall level; messages of severity less than this will not be emitted regardless of the level of the emitter.
+emitters:   a list of emitters.
+
+Standard (log file) emitter
+---------------------------
+kind:       LogFileEmitter
+logdev:     "stderr", "stdout", or a filename
+shift_age:  "daily", "weekly" or "monthly" to rotate based on the calendar
+            if rotating based on file size, number of files to keep
+            default 7
+shift_size: a file size, to rotate based on the file size
+            default 1048576
+
+Redis emitter
+-------------
+kind:       RedisEmitter
+
+
+Example logger.yml
+------------------
+stderr:       &stderr
+  kind:       logger
+  logdev:     stderr
+
+standard:     &standard
+  kind:       logger
+  logdev:     "<%= ENV["RACK_ENV"] || "development" %>.log"
+  shift_age:  daily
+
+development:
+  level:      0
+  emitters:   [ *standard ]
+
+test:
+  level:      1
+  emitters:   [ *stderr ]

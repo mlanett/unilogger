@@ -29,9 +29,11 @@ module Unilogger
     # argument 1 or the block is stringified as the primary message
     # argument 2 is a set of named parameters (e.g. a hash)
     ::Logger::Severity.constants.each do |const|
+      
       # const e.g. INFO; label e.g. info; priority e.g. 1
       label = const.to_s.downcase.to_sym
       priority = ::Logger::Severity.const_get(const)
+      
       # def info( message, options = {}, &block ) ...
       define_method( label ) do |*args,&block|
         raise ArgumentError if args.size > 2
@@ -51,12 +53,14 @@ module Unilogger
           self.emit( details, message.to_s, options )
         end
         @level <= priority
-      end
+      end # info()
+      
       # def info?
       define_method( "#{label}?".to_sym ) do
         @level <= priority
-      end
-    end
+      end # info?
+      
+    end # each
     
   end # Logger
 

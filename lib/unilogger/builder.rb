@@ -1,7 +1,28 @@
-require "logger"
+require "erb"
+require "unilogger/logger"
+require "yaml"
 
 module Unilogger
   class Builder
+    
+    class << self
+      # options must include
+      # env => "development", "test", "production", etc.
+      # root => parent of config and log directories
+      def build( options )
+        env  = options[:env] || ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development"
+        root = options[:root]
+        
+        if File.exist?( yml = root + "/test/logger.yml" ) then
+          cfg = YAML.load(IO.read( yml )) [env]
+        elsif File.exist?( yml = root + "/test/logger.yml.erb" )
+          cfg = YAML.load( (ERB.new( IO.read( yml ) ).result) ) [env]
+        end
+
+        puts cfg.inspect
+        puts Unilogger::Builder.new( cfg ).logger
+      end
+    end # class
     
     def initialize( configuration )
       @configuration = configuration
@@ -14,20 +35,10 @@ module Unilogger
       
       # emitters
       emitters = @configuration["emitters"].map do |options|
-        kind = options.delete("kind")
-        if kind =~ /logger/i then
-          # ruby Logger
-          # for device, accept STDERR, STDOUT, or a filename
-          # for shift_age, accept daily, weekly, monthly, or a number, default 7; @see Ruby Logger
-          # if shift_age is numeric, for shift_size, accept a number, default 1048576; @see Ruby Logger
-          device = options["device"]
-          device = case device when nil; STDERR; when /stderr/i; STDERR; when /stdout/i; STDOUT; else device; end
-          params = [ device, options["shift_age"], options["shift_size"] ].compact
-          emitter = ::Logger.send( :new, *params )
-        else
-          factory = kind.index("::") ? Object.const_get(kind) : Unilogger.const_get(kind)
-          factory.build( options )
-        end
+        kind    = options.delete("kind")
+        kind    = "LogFileEmitter" if kind =~ /logger/i
+        factory = kind.index("::") ? Object.const_get(kind) : Unilogger.const_get(kind)
+        factory.build( options )
       end
       
       Logger.new( level, emitters )
