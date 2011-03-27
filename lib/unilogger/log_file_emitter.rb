@@ -9,25 +9,31 @@ module Unilogger
         logdev = options.delete("logdev")
         case logdev
         when nil, /stderr/i
-          new( STDERR )
+          new( STDERR, :logdev => "STDERR" )
         when /stdout/i
-          new( STDOUT )
+          new( STDOUT, :logdev => "STDOUT" )
         else
-          new( logdev, options )
+          new( logdev, options.merge( :logdev => logdev ) )
         end
       end
     end
     
-    # options may include
-    # shift_age, daily, weekly, monthly, or N, default 7
-    # shift_size, N>0, default 1048576
+    # options includes a JSON representation of logdev
     def initialize( logdev, options = {} )
-      @logdev = ::Logger::LogDevice.new( logdev, options )
+      @options = options
+      @logdev  = ::Logger::LogDevice.new( logdev, options )
     end
     
     def emit( details, message, options )
-      message = "#{message}; #{options.to_json}" if options && options.size > 0
-      @logdev.write "#{details[:time].to_i} [#{details[:pid]}] #{details[:pri_sym]} #{message}"
+      if options && options.size > 0 then
+        options = options.map { |k,v| [k, v.to_json].join(":") }.join(",")
+        message = "#{message}; #{options}"
+      end
+      @logdev.write "#{details[:time].to_i} [#{details[:pid]}] #{details[:pri_sym]} #{message}\n"
+    end
+    
+    def as_json
+      { :log_file => @options }
     end
     
   end # LogFileEmitter

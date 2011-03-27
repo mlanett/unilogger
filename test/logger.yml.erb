@@ -1,28 +1,28 @@
-stderr:       &stderr
-  kind:       Logger
-  device:     stderr
+stderr:         &stderr
+  LogFileEmitter:
+    logdev:     stderr
 
-standard:     &standard
-  kind:       Logger
-  device:     "./log/<%= ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development" %>.log"
-  shift_age:  daily
+standard:       &standard
+  LogFileEmitter:
+    logdev:     "./log/<%= ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development" %>.log"
+    shift_age:  daily
 
 development:
-  level:      debug
-  emitters:   [ *standard ]
+  level:        debug
+  emitters:     [ *standard ]
 
 test:
-  level:      info
-  emitters:   [ *stderr ]
+  level:        info
+  emitters:     [ *stderr ]
 
 beta:
-  level:      info
-  emitters:   [ *standard ]
+  level:        info
+  emitters:     [ *standard ]
 
 staging:
-  level:      info
-  emitters:   [ *standard ]
+  level:        info
+  emitters:     [ *standard ]
 
 production:
-  level:      info
-  emitters:   [ *standard ]
+  level:        info
+  emitters:     [ *standard ]

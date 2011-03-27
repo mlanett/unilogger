@@ -1,4 +1,5 @@
 require "logger"
+require "json"
 
 module Unilogger
   
@@ -61,6 +62,28 @@ module Unilogger
       end # info?
       
     end # each
+    
+    def as_json
+      { :level => @level, :emitters => as_json_helper(@emitters) }
+    end
+    
+    def as_json_helper( it )
+      if it.nil? then
+        it
+      elsif it.respond_to?(:as_json) then
+        it.as_json
+      elsif it.kind_of?(Hash) then
+        it.inject({}) { |a,i| a[i.first] = as_json_helper(i.last); a }
+      elsif it.kind_of?(Array) || it.kind_of?(Enumerable)
+        it.map { |i| as_json_helper(i) }
+      else
+        it
+      end
+    end
+    
+    def to_json
+      as_json.to_json
+    end
     
   end # Logger
 

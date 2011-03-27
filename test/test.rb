@@ -5,6 +5,7 @@ $: << root + "/lib"
 require "unilogger"
 
 logger = Unilogger::Builder.build :root => root
+puts logger.to_json
 
 logger.debug "Starting."
 logger.info  "started", :root => root

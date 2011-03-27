@@ -30,19 +30,19 @@ kind:       RedisEmitter
 
 Example logger.yml
 ------------------
-stderr:       &stderr
-  kind:       logger
-  logdev:     stderr
+stderr:         &stderr
+  logger:
+    logdev:     stderr
 
-standard:     &standard
-  kind:       logger
-  logdev:     "<%= ENV["RACK_ENV"] || "development" %>.log"
-  shift_age:  daily
+standard:       &standard
+  logger:
+    logdev:     "<%= ENV["RACK_ENV"] || "development" %>.log"
+    shift_age:  daily
 
 development:
-  level:      0
-  emitters:   [ *standard ]
+  level:        0
+  emitters:     [ *standard ]
 
 test:
-  level:      1
-  emitters:   [ *stderr ]
+  level:        1
+  emitters:     [ *stderr ]
