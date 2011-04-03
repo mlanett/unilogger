@@ -1,4 +1,5 @@
-Unified logger that writes to a log file, redis queue, mongo collection, and hoptoad.
+Unified logger that writes to a log file.
+Could eventually also write to a redis queue, mongo collection, and hoptoad.
 
 Unilogger is composed at runtime of a Logger instance which delegates log messages to a set of emitters.
 The emitters do the actual work of sending log messages to stderr, a file, redis, or elsewhere.
