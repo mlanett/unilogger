@@ -5,8 +5,10 @@ require "unilogger/logger"
 module Unilogger
   
   class << self
-    def logger( options )
-      Builder.build( options )
+    def build( options )
+      it = Builder.build( options )
+      it.debug "Hello, world!"
+      return it
     end
   end
   
