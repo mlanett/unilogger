@@ -6,9 +6,7 @@ module Unilogger
   
   class << self
     def build( options )
-      it = Builder.build( options )
-      it.debug "Hello, world!"
-      return it
+      Builder.build( options )
     end
   end
   
