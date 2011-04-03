@@ -14,10 +14,12 @@ module Unilogger
         env  = options[:env] || ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development"
         root = options[:root]
         
-        if File.exist?( yml = root + "/test/logger.yml" ) then
+        if File.exist?( yml = "#{root}/config/logger.yml" ) then
           cfg = YAML.load(IO.read( yml )) [env]
-        elsif File.exist?( yml = root + "/test/logger.yml.erb" )
+        elsif File.exist?( yml = "#{root}/config/logger.yml.erb" )
           cfg = YAML.load( (ERB.new( IO.read( yml ) ).result) ) [env]
+        else
+          cfg = { "level" => "debug", "emitters" => [ { "logger" => { "logdev" => "stderr" } } ] }
         end
         
         Unilogger::Builder.new( cfg ).logger
