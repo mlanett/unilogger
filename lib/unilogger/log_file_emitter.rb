@@ -29,7 +29,7 @@ module Unilogger
         options = options.map { |k,v| [k, v.to_json].join(":") }.join(",")
         message = "#{message}; #{options}"
       end
-      @logdev.write "#{details[:time].to_i} [#{details[:pid]}] #{details[:pri_sym]} #{message}\n"
+      @logdev.write "#{details[:time].to_i} [#{details[:pid]}:#{details[:fiber]}] #{details[:pri_sym]} #{message}\n"
     end
     
     def as_json

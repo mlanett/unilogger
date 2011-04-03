@@ -1,5 +1,6 @@
-require "logger"
+require "fiber" unless RUBY_VERSION ~= /^1\.8/
 require "json"
+require "logger"
 
 module Unilogger
   
@@ -39,7 +40,8 @@ module Unilogger
       define_method( label ) do |*args,&block|
         raise ArgumentError if args.size > 2
         if @level <= priority then
-          details = { :pri_sym => const, :pri_num => priority, :pid => Process.pid, :time => Time.now }
+          details = { :pri_sym => const, :pri_num => priority, :pid => Process.pid, :time => Time.now, :fiber => 0 } if RUBY_VERSION ~= /^1\.8/
+          details = { :pri_sym => const, :pri_num => priority, :pid => Process.pid, :time => Time.now, :fiber => Fiber.current.object_id } unless RUBY_VERSION ~= /^1\.8/
           case args.size
           when 0
             message = block.call if block
