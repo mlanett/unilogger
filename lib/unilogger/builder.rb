@@ -25,7 +25,7 @@ module Unilogger
         Unilogger::Builder.new( cfg ).logger
       end
       
-      def as_level( level, default_level = ::Logger::Severity::INFO )
+      def level_to_i( level, default_level = ::Logger::Severity::INFO )
         return default_level if level.nil? || level.size == 0
         return level if level.kind_of?(Integer)
         ::Logger::Severity.const_get( level.to_s.upcase )
@@ -46,7 +46,7 @@ module Unilogger
     
     def logger
       # accept debug...fatal, 0...4, default info
-      level = self.class.as_level( @configuration["level"] )
+      level = self.class.level_to_i( @configuration["level"] )
       
       # emitters
       emitters = @configuration["emitters"].map do |options|
