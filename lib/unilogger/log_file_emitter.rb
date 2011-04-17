@@ -21,8 +21,9 @@ module Unilogger
     # options includes a JSON representation of logdev
     def initialize( logdev, options = {} )
       @options = options
-      @logdev  = ::Logger::LogDevice.new( logdev, options )
       @level   = Builder.level_to_i( options["level"], ::Logger::Severity::DEBUG )
+      soptions = Hash[ options.to_a.map { |k,v| [k.to_sym,v] } ] # poor man's symbolize keys
+      @logdev  = ::Logger::LogDevice.new( logdev, soptions )
     end
     
     def emit( details, message, options )
